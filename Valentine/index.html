@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To my favorite person❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: pink;
+      text-align: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .box {
+      padding: 30px;
+    }
+
+    button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      margin: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .image-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .image-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .image-item img {
+      width: 80%;
+      max-width: 300px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .click-hint {
+      color: darkred;
+      font-size: 14px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .image-message {
+      color: red;
+      font-size: 18px;
+      text-align: left;
+      max-width: 300px;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div id="question">
+      <h1>Will you be my Valentine? 💖</h1>
+      <button onclick="yesClicked()">YES 💕</button>
+      <button id="noBtn">NO 😳</button>
+    </div>
+
+    <div id="surprise" style="display:none;">
+      <h1>Happy Valentine’s Day 💕</h1>
+      <p>You make my world brighter every day ❤️</p>
+
+      <select id="songSelect">
+        <option value="">🎶 Choose a song</option>
+        <option value="song1.mp3">Song One ❤️</option>
+        <option value="song2.mp3">Song Two 💕</option>
+        <option value="song3.mp3">Song Three 💖</option>
+      </select>
+      <br><br>
+      <button onclick="playSelected()">▶ Play Music</button>
+
+      <div class="image-column">
+        <div class="image-item">
+          <img src="pic1.jpg" class="clickable" data-message="Thank you for chasing after me that one day ❤️" data-emoji="jeff.png">
+          <div>
+            <span class="click-hint">Click me 💕</span>
+            <span class="image-message"></span>
+          </div>
+        </div>
+        <div class="image-item">
+          <img src="pic2.jpg" class="clickable" data-message="You make me the happiest man alive knowing I get to see you everyday 💕" data-emoji="jean.png">
+          <div>
+            <span class="click-hint">Click me 💕</span>
+            <span class="image-message"></span>
+          </div>
+        </div>
+        <div class="image-item">
+          <img src="pic3.jpg" class="clickable" data-message="I'm overjoyed that I get to call you my girlfriend 💖" data-emoji="wanda.png">
+          <div>
+            <span class="click-hint">Click me 💕</span>
+            <span class="image-message"></span>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="font-size:48px; color:red; margin-top:40px;">
+        I LOVE YOU ❤️
+      </h2>
+
+      <audio id="music" loop></audio>
+    </div>
+  </div>
+
+  <script>
+    let snowIntervals = [];
+
+    // YES BUTTON
+    function yesClicked() {
+      document.getElementById("question").style.display = "none";
+      document.getElementById("surprise").style.display = "block";
+
+      const music = document.getElementById("music");
+      music.src = "song1.mp3";
+      music.play();
+
+      startSnow(["jeff.png","jean.png","wanda.png"]); // snow all emojis
+    }
+
+    function playSelected() {
+      const song = document.getElementById("songSelect").value;
+      if (!song) {
+        alert("Choose a song first 💕");
+        return;
+      }
+      const music = document.getElementById("music");
+      music.src = song;
+      music.play();
+    }
+
+    // NO BUTTON (catchable version)
+    const noBtn = document.getElementById("noBtn");
+    const noMessages = ["Nu uhh 😏", "Wowwww 😳", "Ur mine, you can say no ❤️"];
+
+    noBtn.addEventListener("click", () => {
+      // Show random message
+      const msg = noMessages[Math.floor(Math.random() * noMessages.length)];
+      alert(msg);
+
+      // Move button slightly after short delay (200ms)
+      setTimeout(() => {
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 50) + 25;
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 50) + 25;
+        const deg = Math.floor(Math.random() * 20) - 10; // small rotation
+        const scale = 0.9 + Math.random() * 0.2; // small scale
+        noBtn.style.position = "absolute";
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        noBtn.style.transform = `rotate(${deg}deg) scale(${scale})`;
+      }, 200);
+    });
+
+    // IMAGE CLICK MESSAGES
+    const images = document.querySelectorAll(".clickable");
+    images.forEach(img => {
+      img.addEventListener("click", () => {
+        const msg = img.getAttribute("data-message");
+        const messageSpan = img.nextElementSibling.querySelector(".image-message");
+        messageSpan.textContent = msg;
+
+        const emoji = img.getAttribute("data-emoji");
+        startSnow([emoji]); // snow only that emoji
+      });
+    });
+
+    // SPAWN SNOW FUNCTION
+    function startSnow(emojis){
+      // clear previous snow
+      snowIntervals.forEach(i => clearInterval(i));
+      snowIntervals = [];
+
+      const interval = setInterval(()=>{
+        const x = Math.random() * window.innerWidth;
+        const src = emojis[Math.floor(Math.random()*emojis.length)];
+        spawnSnowEmoji(x, -50, src);
+      }, 150);
+
+      snowIntervals.push(interval);
+    }
+
+    function spawnSnowEmoji(x, y, src){
+      const img = document.createElement("img");
+      img.src = src;
+      img.style.position = "fixed";
+      img.style.left = x + "px";
+      img.style.top = y + "px";
+      img.style.width = "40px";
+      img.style.height = "40px";
+      img.style.pointerEvents = "none";
+      img.style.opacity = 1;
+      img.style.transition = "transform 5s linear, opacity 5s linear";
+      document.body.appendChild(img);
+
+      const endY = window.innerHeight + 50;
+      const drift = (Math.random()-0.5)*200;
+
+      setTimeout(()=>{
+        img.style.transform = `translate(${drift}px, ${endY}px) rotate(${Math.random()*360}deg) scale(${0.5+Math.random()})`;
+        img.style.opacity = 0;
+      },50);
+
+      setTimeout(()=> img.remove(),5000);
+    }
+  </script>
+</body>
+</html>
